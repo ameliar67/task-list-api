@@ -34,7 +34,6 @@ def post_task_ids_to_goal(goal_id):
     goal.tasks = tasks
     db.session.commit()
 
-    # Form the specific response required by the test framework
     response_body = {
         "id": goal.id,
         "task_ids": [task.id for task in goal.tasks]

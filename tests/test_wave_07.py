@@ -27,12 +27,9 @@ def test_route_utilities_validate_model_with_task(client, three_tasks):
 #@pytest.mark.skip(reason="No way to test this feature yet")
 def test_route_utilities_validate_model_with_task_invalid_id(client, three_tasks):
     #Act & Assert
-    # Calling `validate_model` without being invoked by a route will
-    # cause an `HTTPException` when an `abort` statement is reached 
     with pytest.raises(HTTPException) as e:
         result_task = validate_model(Task, "One")
     
-    # Test that the correct status code and response message are returned
     response = e.value.get_response()
     assert response.status_code == 400
     response_body = response.get_json()

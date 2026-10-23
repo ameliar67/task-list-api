@@ -67,16 +67,13 @@ def update_task(task_id):
         return {"details": "Invalid data"}, 400
 
     task.title = request_body["title"]
-    # Check if 'is_complete' was provided in the request
     if "is_complete" in request_body:
         is_complete = request_body["is_complete"]
         
         if is_complete:
-            # Only set a new timestamp if it wasn't already completed
             if not task.completed_at:
                 task.completed_at = datetime.now()
         else:
-            # If false, mark it as incomplete
             task.completed_at = None
     task.description = request_body["description"]
     db.session.commit()

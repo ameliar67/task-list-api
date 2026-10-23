@@ -20,7 +20,6 @@ def test_post_task_ids_to_goal(client, one_goal, three_tasks):
         "task_ids": [1, 2, 3]
     }
 
-    # Check that Goal was updated in the db
     query = db.select(Goal).where(Goal.id == 1)
     assert len(db.session.scalar(query).tasks) == 3
 
