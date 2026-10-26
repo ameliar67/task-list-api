@@ -3,6 +3,8 @@ from ..db import db
 from app.models.task import Task
 from app.routes.route_utilities import validate_model
 from datetime import datetime
+import os
+import requests
 
 task_bp = Blueprint("task_bp", __name__, url_prefix="/tasks")
 
@@ -56,6 +58,36 @@ def get_one_task(task_id):
     task = validate_model(Task,task_id)
 
     return task.to_dict(),200
+
+@task_bp.patch("/<task_id>/mark_complete")
+def send_message_to_slack(task_id):
+    task = validate_model(Task,task_id)
+
+    slack_token = os.environ.get('SLACK_TOKEN')
+    if not slack_token:
+        raise ValueError("SLACK_TOKEN environment variable is missing!")
+    url = "https://slack.com/api/chat.postMessage"
+    payload = {
+        "text": (f"Someone just completed the task {task.title}"),
+        "channel": "task-notification"
+    }
+    headers = {
+        "Authorization": f"Bearer {slack_token}"
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+    
+        response_data = response.json()
+        if response_data.get("ok"):
+            print("Message sent successfully!")
+        else:
+            print(f"Slack API Error: {response_data.get('error')}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"HTTP Request failed: {e}")
+            
+    return Response(status=204, mimetype="application/json")
 
 
 @task_bp.put("/<task_id>")
