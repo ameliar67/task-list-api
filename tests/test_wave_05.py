@@ -147,6 +147,8 @@ def test_update_goal(client, one_goal):
         "title": "Updated Goal Title"
     })
 
+    get_response = client.get("/goals/1")
+
     # Assert
     # ---- Complete Assertions Here ----
     # assertion 1 goes here
@@ -154,7 +156,7 @@ def test_update_goal(client, one_goal):
     # assertion 2 goes here
     assert response.mimetype == "application/json"
     # assertion 3 goes here
-    assert response.data == b""
+    assert get_response.status_code == 200
     # ---- Complete Assertions Here ----
 
 
