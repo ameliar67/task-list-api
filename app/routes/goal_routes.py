@@ -2,7 +2,7 @@ from flask import Blueprint , abort , make_response, request, Response
 from ..db import db
 from app.models.goal import Goal
 from app.models.task import Task
-from app.routes.route_utilities import validate_model
+from app.routes.route_utilities import validate_model, create_model
 from datetime import datetime
 
 goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goals")
@@ -10,13 +10,7 @@ goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goals")
 @goal_bp.post("")
 def create_new_goal():
     request_body = request.get_json()
-    if "title" not in request_body:
-        return {"details": "Invalid data"}, 400
-    new_goal = Goal.from_dict(request_body)
-
-    db.session.add(new_goal)
-    db.session.commit()
-    return new_goal.to_dict(), 201
+    return create_model(Goal, request_body)
 
 @goal_bp.post("/<goal_id>/tasks")
 def post_task_ids_to_goal(goal_id):
