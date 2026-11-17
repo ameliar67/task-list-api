@@ -64,6 +64,8 @@ def get_tasks(goal_id):
 def update_task(goal_id):
     goal = validate_model(Goal,goal_id)
     request_body = request.get_json()
+    if "title" not in request_body:
+        return {"error": "Title is required"}, 400
 
     goal.title = request_body["title"]
     db.session.commit()
