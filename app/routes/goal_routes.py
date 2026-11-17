@@ -20,10 +20,7 @@ def post_task_ids_to_goal(goal_id):
     goal = validate_model(Goal, goal_id)
     task_ids = request_body.get("task_ids", [])
 
-    tasks = []
-    for task_id in task_ids:
-        task = validate_model(Task, task_id)
-        tasks.append(task)
+    tasks = [validate_model(Task, task_id) for task_id in task_ids]
 
     goal.tasks = tasks
     db.session.commit()
