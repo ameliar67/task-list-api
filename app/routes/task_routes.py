@@ -1,7 +1,7 @@
 from flask import Blueprint , abort , make_response, request, Response
 from ..db import db
 from app.models.task import Task
-from app.routes.route_utilities import validate_model, create_model
+from app.routes.route_utilities import validate_model, create_model, get_filtered_tasks
 from datetime import datetime
 import os
 import requests
@@ -16,32 +16,7 @@ def create_new_task():
 
 @task_bp.get("")
 def get_all_tasks():
-    query = db.select(Task)
-    title = request.args.get("title")
-
-    if title:
-        query = query.where(Task.title == title)
-
-    description = request.args.get("description")
-    if description:
-        query = query.where(Task.description.ilike(f"%{description}%")) 
-
-    is_complete = request.args.get("is_complete")
-    if is_complete is not None:
-        is_complete_bool = is_complete.lower() == "true"
-        if is_complete_bool:
-            query = query.where(Task.completed_at.is_not(None))
-        else:
-            query = query.where(Task.completed_at.is_(None))   
-
-    sort_order = request.args.get("sort")
-    if sort_order == "desc":
-        query = query.order_by(Task.title.desc())
-    elif sort_order == "asc":
-        query = query.order_by(Task.title.asc())
-
-    tasks = db.session.scalars(query)
-    tasks_response = [task.to_dict() for task in tasks]
+    tasks_response = get_filtered_tasks(Task, request)
             
     return tasks_response, 200
 

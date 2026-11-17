@@ -34,3 +34,32 @@ def create_model(cls, model_data):
     db.session.commit()
 
     return new_model.to_dict(), 201
+
+def get_filtered_tasks(cls, request):
+    query = db.select(cls)
+    title = request.args.get("title")
+
+    if title:
+        query = query.where(cls.title == title)
+
+    description = request.args.get("description")
+    if description:
+        query = query.where(cls.description.ilike(f"%{description}%")) 
+
+    is_complete = request.args.get("is_complete")
+    if is_complete is not None:
+        is_complete_bool = is_complete.lower() == "true"
+        if is_complete_bool:
+            query = query.where(cls.completed_at.is_not(None))
+        else:
+            query = query.where(cls.completed_at.is_(None))   
+
+    sort_order = request.args.get("sort")
+    if sort_order == "desc":
+        query = query.order_by(cls.title.desc())
+    elif sort_order == "asc":
+        query = query.order_by(cls.title.asc())
+
+    tasks = db.session.scalars(query)
+    tasks_response = [task.to_dict() for task in tasks]
+    return tasks_response

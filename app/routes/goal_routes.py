@@ -2,7 +2,7 @@ from flask import Blueprint , abort , make_response, request, Response
 from ..db import db
 from app.models.goal import Goal
 from app.models.task import Task
-from app.routes.route_utilities import validate_model, create_model
+from app.routes.route_utilities import validate_model, create_model, get_filtered_tasks
 from datetime import datetime
 
 goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goals")
@@ -35,14 +35,7 @@ def post_task_ids_to_goal(goal_id):
 
 @goal_bp.get("")
 def get_all_tasks():
-    query = db.select(Goal)
-    title = request.args.get("title")
-
-    if title:
-        query = query.where(Goal.title == title)  
-
-    goals = db.session.scalars(query)
-    tasks_response = [goal.to_dict() for goal in goals]
+    tasks_response = get_filtered_tasks(Goal, request)
             
     return tasks_response
 
