@@ -30,7 +30,7 @@ def post_task_ids_to_goal(goal_id):
         "task_ids": [task.id for task in goal.tasks]
     }
 
-    return response_body, 200
+    return response_body
 
 
 @goal_bp.get("")
@@ -44,20 +44,20 @@ def get_all_tasks():
     goals = db.session.scalars(query)
     tasks_response = [goal.to_dict() for goal in goals]
             
-    return tasks_response, 200
+    return tasks_response
 
 
 @goal_bp.get("/<goal_id>")
 def get_one_task(goal_id):
     task = validate_model(Goal,goal_id)
 
-    return task.to_dict(),200
+    return task.to_dict()
 
 @goal_bp.get("/<goal_id>/tasks")
 def get_tasks(goal_id):
     tasks = validate_model(Goal,goal_id)
 
-    return tasks.to_dict(include_tasks=True), 200
+    return tasks.to_dict(include_tasks=True)
 
 
 @goal_bp.put("/<goal_id>")
