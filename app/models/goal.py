@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..db import db
+from .task import Task
 
 class Goal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -24,5 +25,5 @@ class Goal(db.Model):
         )
         tasks = goal_data.get("tasks", [])
         if tasks:
-            new_data.tasks = tasks
+            new_data.tasks = [Task.from_dict(task) for task in tasks]
         return new_data
