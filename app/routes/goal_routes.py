@@ -50,7 +50,7 @@ def get_one_task(goal_id):
 def get_tasks(goal_id):
     tasks = validate_model(Goal,goal_id)
 
-    return tasks.to_dict(include_tasks=True)
+    return tasks.to_dict_with_tasks()
 
 
 @goal_bp.put("/<goal_id>")
