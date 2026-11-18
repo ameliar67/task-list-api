@@ -31,7 +31,7 @@ class Task(db.Model):
         new_data = cls(
             title=task_data["title"],
             description=task_data["description"],
-            completed_at = datetime.now() if task_data.get("is_complete") else None
+            completed_at=task_data.get("completed_at")
         )
         return new_data
 
