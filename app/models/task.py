@@ -17,7 +17,7 @@ class Task(db.Model):
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            "is_complete": bool(self.completed_at)
+            "is_complete": self.is_complete()
             }
 
         # Only add 'goal_id' if it is not None
@@ -34,3 +34,6 @@ class Task(db.Model):
             completed_at = datetime.now() if task_data.get("is_complete") else None
         )
         return new_data
+
+    def is_complete(self):
+        return bool(self.completed_at)
